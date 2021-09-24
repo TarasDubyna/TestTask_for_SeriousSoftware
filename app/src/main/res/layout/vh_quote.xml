@@ -48,12 +48,6 @@
             android:layout_height="wrap_content"
             android:minHeight="160dp"/>
 
-        <!--<com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/performance_graph"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="160dp"/>-->
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

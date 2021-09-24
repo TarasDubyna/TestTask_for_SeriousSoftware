@@ -14,10 +14,7 @@ import java.util.*
 
 object DataUtil {
 
-    fun calculatePerformance(firstValue: Float, value: Float): Float {
-        val performance = ((value - firstValue) / firstValue * 100)
-        return performance
-    }
+    fun calculatePerformance(firstValue: Float, value: Float): Float = ((value - firstValue) / firstValue * 100)
 
     fun getPerformanceLineDataSet(quoteSymbol: QuoteSymbol): LineDataSet {
         val entries = quoteSymbol.closures.mapIndexed { index, value ->
