@@ -17,8 +17,6 @@ import kotlin.collections.ArrayList
 
 class MainViewModel() : ViewModel() {
 
-    private val TAG = APP_TAG + MainViewModel::class.java.simpleName
-
     private val repository: QuotesRepository by inject(QuotesRepository::class.java)
 
     val selectedRange: MutableLiveData<QuoteRange> = MutableLiveData(QuoteRange.WEEK)
@@ -26,29 +24,21 @@ class MainViewModel() : ViewModel() {
 
     init {
         selectedRange.value?.let {
-            Log.d(TAG, "init: load ${it.name}")
             getQuoteSymbols(it)
         }
     }
 
     fun selectRange(range: QuoteRange) {
-        Log.d(TAG, "selectRange: ${range.name}")
-        if (range != selectedRange.value) {
-            getQuoteSymbols(range)
-        } else {
-            Log.d(TAG, "selectRange: ignore")
-        }
+        if (range != selectedRange.value) getQuoteSymbols(range)
     }
 
     private fun getQuoteSymbols(range: QuoteRange) {
-        Log.d(TAG, "getQuoteSymbols: ${range.name}")
         selectedRange.value = range
         viewModelScope.launch {
             when (range) {
                 QuoteRange.WEEK -> repository.getWeekQuotes()
                 QuoteRange.MONTH -> repository.getMonthQuotes()
             }.collect {
-                Log.d(TAG, "getQuoteSymbols: ${range.name}: ${it.toString()}")
                 quoteSymbols.value = it
             }
 

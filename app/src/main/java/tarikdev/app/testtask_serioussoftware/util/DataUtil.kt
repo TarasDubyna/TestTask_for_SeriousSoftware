@@ -14,16 +14,8 @@ import java.util.*
 
 object DataUtil {
 
-    val TAG = APP_TAG + DataUtil::class.java.simpleName
-
-    /*
-    fun calculatePerformance(firstValue: Float, value: Float): Float =
-        ((value - firstValue) / firstValue * 100)
-        */
-
     fun calculatePerformance(firstValue: Float, value: Float): Float {
         val performance = ((value - firstValue) / firstValue * 100)
-        Log.d(TAG, "calculatePerformance: firstValue=$firstValue, value=$value, performance=$performance")
         return performance
     }
 

@@ -21,15 +21,7 @@ class MainFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         fun newInstance() = MainFragment()
     }
 
-    private val TAG = APP_TAG + MainFragment::class.java.simpleName
-
     private lateinit var viewModel: MainViewModel
-
-
-    /*override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,34 +37,12 @@ class MainFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         initQuoteSymbolsRecycler()
     }
 
-    /*override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.range_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }*/
-
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "onOptionsItemSelected: ")
-        val range = when (item.itemId) {
-            R.id.range_menu_week -> QuoteRange.WEEK
-            R.id.menu_main_month -> QuoteRange.MONTH
-            else -> null
-        }
-        Log.d(TAG, "onOptionsItemSelected: range=${range?.name}")
-        range?.let {
-            viewModel.selectRange(it)
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-    }*/
-
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.selectedRange.observe(viewLifecycleOwner, {
-            Log.d(TAG, "onViewCreated: selectedRange.observe: ${it.name}")
             toolbar.title = "Range: ${it.name}"
         })
         viewModel.quoteSymbols.observe(viewLifecycleOwner, {
-            Log.d(TAG, "onViewCreated: quoteSymbols.observe: ${it.size}")
             (quote_symbols_rv.adapter as QuoteSymbolsAdapter).update(it, viewModel.selectedRange.value!!)
         })
     }
@@ -80,7 +50,6 @@ class MainFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     private fun initToolbar() {
         toolbar.inflateMenu(R.menu.range_menu)
         toolbar.setOnMenuItemClickListener(this)
-        //toolbar.title = WEEK
     }
 
     private fun initQuoteSymbolsRecycler() {
@@ -97,7 +66,6 @@ class MainFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             R.id.menu_main_month -> QuoteRange.MONTH
             else -> null
         }
-        Log.d(TAG, "onMenuItemClick: range=${range?.name}")
         range?.let {
             viewModel.selectRange(it)
             return true

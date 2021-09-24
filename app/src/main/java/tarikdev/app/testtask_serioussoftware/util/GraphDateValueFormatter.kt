@@ -9,23 +9,12 @@ import java.util.*
 class GraphDateValueFormatter(val range: QuoteRange): IndexAxisValueFormatter() {
 
     override fun getFormattedValue(value: Float): String {
-
-        // week (Hourly data)
-        // month (Daily data)
-
-        val milliseconds  = value.toLong() * 1000
-        val date = Date(milliseconds)
-        /*val dateTimeFormat: DateFormat = when(range) {
-            QuoteRange.WEEK -> DateFormat.getTimeInstance()
-            QuoteRange.MONTH -> DateFormat.getDateInstance()
-        }*/
-        val dateTimeFormat: DateFormat = when(range) {
-            QuoteRange.WEEK -> SimpleDateFormat("HH:mm dd.MM.yyyy")
-            QuoteRange.MONTH -> SimpleDateFormat("dd.MM.yyyy")
+        val date = Date(value.toLong() * 1000)
+        val dateFormat: DateFormat = when(range) {
+            QuoteRange.WEEK -> SimpleDateFormat("HH:mm dd.MM")
+            QuoteRange.MONTH -> SimpleDateFormat("dd.MM")
         }
-            //DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-
-        return dateTimeFormat.format(date)
+        return dateFormat.format(date)
     }
 
 }
