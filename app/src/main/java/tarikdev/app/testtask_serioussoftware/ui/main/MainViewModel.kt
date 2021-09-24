@@ -4,80 +4,55 @@ import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
+import tarikdev.app.testtask_serioussoftware.APP_TAG
 import tarikdev.app.testtask_serioussoftware.data.repository.QuotesRepository
-import tarikdev.app.testtask_serioussoftware.data.repository.QuotesRepositoryImpl
 import tarikdev.app.testtask_serioussoftware.model.Quote
 import tarikdev.app.testtask_serioussoftware.model.QuotePerformance
-import tarikdev.app.testtask_serioussoftware.model.QuoteSymbol
+import tarikdev.app.testtask_serioussoftware.model.api.QuoteSymbol
 import tarikdev.app.testtask_serioussoftware.model.QuoteRange
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class MainViewModel() : ViewModel() {
 
-    private val TAG = MainViewModel::class.java.simpleName
+    private val TAG = APP_TAG + MainViewModel::class.java.simpleName
 
     private val repository: QuotesRepository by inject(QuotesRepository::class.java)
 
-    val dataRange: MutableLiveData<QuoteRange> = MutableLiveData(QuoteRange.WEEK)
-    val graphData: MutableLiveData<HashMap<String, LinkedList<Quote>>> = MutableLiveData(hashMapOf())
-    val performanceData: MutableLiveData<HashMap<String, LinkedList<QuotePerformance>>> = MutableLiveData(hashMapOf())
+    val selectedRange: MutableLiveData<QuoteRange> = MutableLiveData(QuoteRange.WEEK)
+    val quoteSymbols: MutableLiveData<List<QuoteSymbol>> = MutableLiveData(listOf())
 
     init {
-        viewModelScope.launch {
-            Log.d(TAG, "init: range=${dataRange.value}")
-            repository.fetchQuoteSymbols(dataRange.value!!)
-
-            repository.quoteSymbols.collect {
-                Log.d(TAG, "quoteSymbols: init size=${it.size}")
-                graphData.value = convertToGraphData(it)
-                performanceData.value = calculatePerformanceData(it)
-            }
+        selectedRange.value?.let {
+            Log.d(TAG, "init: load ${it.name}")
+            getQuoteSymbols(it)
         }
     }
 
-    fun showQuoteSymbols(range: QuoteRange) {
-        if (range != dataRange.value) {
-            Log.d(TAG, "showQuoteSymbols: newRange=${range.name}")
-            dataRange.value = range
-            viewModelScope.launch {
-                repository.fetchQuoteSymbols(dataRange.value!!)
-            }
+    fun selectRange(range: QuoteRange) {
+        Log.d(TAG, "selectRange: ${range.name}")
+        if (range != selectedRange.value) {
+            getQuoteSymbols(range)
         } else {
-            Log.d(TAG, "showQuoteSymbols: the same range(${range.name})")
+            Log.d(TAG, "selectRange: ignore")
         }
     }
 
-    private fun calculatePerformanceData(quoteSymbols: List<QuoteSymbol>): HashMap<String, LinkedList<QuotePerformance>> {
-        val quotePerformancesMap: HashMap<String, LinkedList<QuotePerformance>> = hashMapOf()
-        quoteSymbols.forEach { quoteSymbol ->
-            val quotePerformance: LinkedList<QuotePerformance> = LinkedList()
-            val firstOpenValue = quoteSymbol.opens.first()
-            quoteSymbol.opens.forEachIndexed { index, value ->
-                val performance: Int = ((value-firstOpenValue)/firstOpenValue*100).toInt()
-                quotePerformance.add(QuotePerformance(performance, quoteSymbol.timestamps[index]))
+    private fun getQuoteSymbols(range: QuoteRange) {
+        Log.d(TAG, "getQuoteSymbols: ${range.name}")
+        selectedRange.value = range
+        viewModelScope.launch {
+            when (range) {
+                QuoteRange.WEEK -> repository.getWeekQuotes()
+                QuoteRange.MONTH -> repository.getMonthQuotes()
+            }.collect {
+                Log.d(TAG, "getQuoteSymbols: ${range.name}: ${it.toString()}")
+                quoteSymbols.value = it
             }
-            quotePerformancesMap[quoteSymbol.symbol] = quotePerformance
-        }
-        return quotePerformancesMap
-    }
 
-    private fun convertToGraphData(quoteSymbols: List<QuoteSymbol>): HashMap<String, LinkedList<Quote>> {
-        val graphData: HashMap<String, LinkedList<Quote>> = hashMapOf()
-        quoteSymbols.forEach {
-            val quotes: LinkedList<Quote> = LinkedList()
-            val symbol = it.symbol
-            it.timestamps.forEachIndexed { index, timestamp ->
-                quotes.add(Quote(symbol, timestamp, it.opens[index], it.closures[index], it.highs[index], it.lows[index], it.volumes[index]))
-            }
-            graphData[symbol] = quotes
         }
-        return graphData
     }
-
 
 }

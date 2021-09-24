@@ -2,7 +2,7 @@ package tarikdev.app.testtask_serioussoftware.util
 
 import android.content.Context
 import com.google.gson.Gson
-import tarikdev.app.testtask_serioussoftware.model.ResponseQuotes
+import tarikdev.app.testtask_serioussoftware.model.api.ResponseQuotes
 import java.io.IOException
 
 object JsonFileReaderUtil {

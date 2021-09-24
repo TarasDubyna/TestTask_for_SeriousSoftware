@@ -9,6 +9,8 @@ import org.koin.dsl.module
 import tarikdev.app.testtask_serioussoftware.data.repository.QuotesRepository
 import tarikdev.app.testtask_serioussoftware.data.repository.QuotesRepositoryImpl
 
+const val APP_TAG = "TestTask"
+
 class App: Application() {
 
     val appModule = module {

@@ -1,4 +1,4 @@
-package tarikdev.app.testtask_serioussoftware.model
+package tarikdev.app.testtask_serioussoftware.model.api
 
 data class QuoteSymbol(
     val symbol: String,
@@ -8,4 +8,4 @@ data class QuoteSymbol(
     val highs: List<Float>,
     val lows: List<Float>,
     val volumes: List<Long>
-    )
+)
